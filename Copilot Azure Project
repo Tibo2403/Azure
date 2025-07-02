@@ -1,0 +1,71 @@
+### Projet Copilot Prêt à Déployer sur Azure (avec Azure OpenAI + Flask + Azure App Service)
+
+# 1. Structure du projet :
+# ├── app.py                 --> Backend Flask avec endpoint /ask
+# ├── requirements.txt       --> Dépendances Python
+# ├── startup.sh             --> Script de démarrage pour App Service Linux
+# ├── .env                   --> Fichier d'environnement sécurisé (non versionné)
+# └── .azure/config.json     --> Configuration (déploiement GitHub Actions ou Azure CLI)
+
+# 2. app.py
+from flask import Flask, request, jsonify
+import openai
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+app = Flask(__name__)
+
+openai.api_type = "azure"
+openai.api_base = os.getenv("OPENAI_API_BASE")
+openai.api_version = "2023-07-01-preview"
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+deployment_id = os.getenv("DEPLOYMENT_ID")  # ex: "gpt-35-turbo"
+
+@app.route("/ask", methods=["POST"])
+def ask():
+    data = request.get_json()
+    prompt = data.get("prompt")
+
+    try:
+        response = openai.ChatCompletion.create(
+            engine=deployment_id,
+            messages=[
+                {"role": "system", "content": "Tu es un assistant cybersécurité intelligent."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        message = response['choices'][0]['message']['content']
+        return jsonify({"response": message})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+# 3. requirements.txt
+flask==2.3.3
+openai==0.28.1
+python-dotenv==1.0.0
+
+# 4. startup.sh
+#!/bin/bash
+python3 -m pip install -r requirements.txt
+python3 app.py
+
+# 5. .env (NE PAS VERSIONNER !)
+# OPENAI_API_BASE=https://<nom-openai>.openai.azure.com
+# OPENAI_API_KEY=<clé secrète>
+# DEPLOYMENT_ID=gpt-35-turbo
+
+# 6. Déploiement sur Azure App Service Linux
+# (via portail ou commande CLI Azure)
+# Exemple CLI :
+# az webapp up --runtime "PYTHON:3.10" --name mon-copilot-app --resource-group mon-groupe --location westeurope
+
+# Variables d'environnement à définir dans App Service (Configuration > App Settings) si on ne lit pas .env :
+# OPENAI_API_BASE=https://<nom-openai>.openai.azure.com
+# OPENAI_API_KEY=<clé secrète>
+# DEPLOYMENT_ID=gpt-35-turbo
+
+# Une fois déployé, tu pourras interroger ton assistant avec :
+# curl -X POST https://<ton-app>.azurewebsites.net/ask -H "Content-Type: application/json" -d '{"prompt": "Liste les dernières erreurs 500"}'
