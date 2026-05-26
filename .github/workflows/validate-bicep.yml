@@ -1,0 +1,20 @@
+name: Validate Bicep
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate Bicep files
+        run: |
+          az bicep install
+          for file in *.bicep; do
+            echo "Building $file"
+            az bicep build --file "$file"
+          done
