@@ -1,0 +1,19 @@
+name: Bicep Validation
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build Bicep templates
+        run: |
+          az bicep build --file pentest.bicep
+          az bicep build --file pentest2.bicep
