@@ -1,0 +1,87 @@
+# AZ-305 Architecture Coverage
+
+This repo is not an exam dump. It is a hands-on reference lab that maps Azure
+architecture design concerns to deployable Bicep examples.
+
+Microsoft's AZ-305 study guide currently groups the exam around four areas:
+identity/governance/monitoring, data storage, business continuity, and
+infrastructure design. The templates in this repo are organized around those
+same architecture decisions.
+
+## Identity, Governance, and Monitoring
+
+| AZ-305 concern | Repo implementation |
+| --- | --- |
+| Logging and monitoring | Log Analytics workspace and workspace-based Application Insights in `az305-reference-architecture.bicep`. |
+| Identity and authorization | System-assigned managed identity on VM, App Service, and Data Factory resources. |
+| Secrets, certificates, keys | Key Vault with RBAC authorization, soft delete, and purge protection. |
+| Governance | `az305-subscription-governance.bicep` creates a resource group, custom tag policy assignment, and monthly budget. |
+| Tagging | All templates merge standard tags: `environment`, `certification`, `managedBy`, and workload tags. |
+
+## Data Storage
+
+| AZ-305 concern | Repo implementation |
+| --- | --- |
+| Semi-structured and unstructured data | StorageV2 account with HTTPS-only traffic, TLS 1.2 minimum, no public blob access, GRS replication, blob versioning, change feed, and delete retention. |
+| Data protection and durability | Storage redundancy and retention controls demonstrate protection tradeoffs. |
+| Data integration | Data Factory is included as the integration and analytics orchestration example. |
+
+## Business Continuity
+
+| AZ-305 concern | Repo implementation |
+| --- | --- |
+| Backup and disaster recovery | Recovery Services vault reference resource. |
+| High availability design | App Service, Storage GRS, and optional Bastion are included as design examples. |
+| Cost-aware continuity | Expensive resources are parameterized so labs can run with minimal defaults. |
+
+## Infrastructure
+
+| AZ-305 concern | Repo implementation |
+| --- | --- |
+| Compute | Optional Linux VM, App Service, and Container Registry examples. |
+| Network design | Segmented VNet with app, data, private endpoint, and Bastion subnets. |
+| Network security | NSGs, closed-by-default SSH source CIDR, no VM public IP by default, optional Bastion. |
+| Load balancing and routing | The current template is ready for App Gateway, Front Door, or Load Balancer extensions. |
+| Messaging and eventing | Service Bus queue and Event Grid topic examples. |
+| Automated deployment | PowerShell deployment and what-if scripts under `scripts/`, plus CI Bicep validation. |
+
+## Recommended Lab Flow
+
+1. Deploy governance at subscription scope:
+
+   ```powershell
+   .\scripts\deploy-governance.ps1 `
+     -SubscriptionId "<subscription-id>" `
+     -BudgetContactEmail "you@example.com"
+   ```
+
+2. Preview the resource-group deployment:
+
+   ```powershell
+   .\scripts\whatif-az305.ps1 -ResourceGroupName rg-az305-reference-dev
+   ```
+
+3. Deploy the reference architecture:
+
+   ```powershell
+   .\scripts\deploy-az305.ps1 -ResourceGroupName rg-az305-reference-dev
+   ```
+
+4. For VM administration, prefer Bastion:
+
+   ```powershell
+   .\scripts\deploy-az305.ps1 `
+     -ResourceGroupName rg-az305-reference-dev `
+     -DeployVm `
+     -DeployBastion `
+     -SshPublicKeyPath "$HOME\.ssh\id_rsa.pub"
+   ```
+
+## Notes
+
+- Defaults are designed to be safer than the original pentest lab: no public VM
+  IP by default in the AZ-305 template and SSH CIDR defaults to a closed value.
+- Some services are reference resources rather than full production platforms.
+  The goal is to practice design tradeoffs and deployment patterns.
+- For production, add private endpoints, diagnostic settings for each service,
+  workload-specific backup policies, and route/firewall design.

@@ -1,34 +1,66 @@
-# Azure Pentest VM
+# Azure Architecture Labs
 
-This repository contains Bicep templates for deploying a small Linux virtual machine dedicated to authorized security testing labs on Azure.
+This repository contains Azure Bicep templates for architecture practice, AZ-305
+study, and authorized security lab deployments.
 
-> Legal notice: use these templates only on environments where you have explicit permission to perform security testing.
+> Legal notice: use security-testing templates only on environments where you
+> have explicit permission to perform security testing.
 
 ## What It Deploys
 
-- Ubuntu Linux VM sized for a lightweight lab.
-- Virtual network and subnet.
-- Network security group allowing SSH.
-- Public IP and network interface.
-- Optional custom script extension that installs basic tools such as `nmap` and `curl`.
+- `az305-reference-architecture.bicep`: reference architecture covering AZ-305
+  design areas: identity, governance, monitoring, storage, continuity,
+  compute, networking, messaging, eventing, and deployment automation.
+- `az305-subscription-governance.bicep`: subscription-scope governance with a
+  resource group, custom tag policy, and budget.
+- `pentest.bicep`: secured Linux VM lab for authorized testing.
+- `pentest2.bicep`: compatibility wrapper around `pentest.bicep`.
 
 ## Repository Contents
 
 | Path | Purpose |
 | --- | --- |
-| `pentest.bicep` | Main Bicep template for the lab VM. |
-| `pentest2.bicep` | Alternate copy of the VM template kept for experimentation. |
+| `az305-reference-architecture.bicep` | Resource-group scoped AZ-305 reference architecture. |
+| `az305-subscription-governance.bicep` | Subscription-scoped governance and budget template. |
+| `pentest.bicep` | Hardened VM template for an authorized security lab. |
+| `pentest2.bicep` | Wrapper kept for compatibility with older commands. |
+| `docs/az-305-coverage.md` | Mapping between AZ-305 design objectives and repo assets. |
+| `scripts/` | PowerShell deployment and what-if helpers. |
 | `Resume/` | Static resume site assets. |
-| `.github/workflows/bicep-validate.yml` | CI check that builds the Bicep templates. |
+| `.github/workflows/bicep-validate.yml` | CI check that builds all Bicep templates. |
 
 ## Prerequisites
 
 - Azure CLI installed and authenticated.
-- Existing Azure resource group.
-- SSH public key for VM authentication.
-- Permission to create compute, networking, and public IP resources.
+- Permission to create resource groups and Azure resources.
+- Subscription contributor or equivalent rights for `az305-subscription-governance.bicep`.
+- SSH public key for VM deployments.
 
-## Deploy
+## AZ-305 Reference Deployment
+
+Preview the deployment:
+
+```powershell
+.\scripts\whatif-az305.ps1 -ResourceGroupName rg-az305-reference-dev
+```
+
+Deploy governance at subscription scope:
+
+```powershell
+.\scripts\deploy-governance.ps1 `
+  -SubscriptionId <subscription-id> `
+  -BudgetContactEmail you@example.com
+```
+
+Deploy the resource-group architecture:
+
+```powershell
+.\scripts\deploy-az305.ps1 -ResourceGroupName rg-az305-reference-dev
+```
+
+For details, see [`docs/az-305-coverage.md`](docs/az-305-coverage.md).
+
+## Pentest VM Deployment
 
 ```bash
 az login
@@ -38,7 +70,8 @@ az deployment group create \
   --resource-group <resource-group-name> \
   --template-file pentest.bicep \
   --parameters adminUsername=<admin-user> \
-               sshPublicKey="$(cat ~/.ssh/id_rsa.pub)"
+               sshPublicKey="$(cat ~/.ssh/id_rsa.pub)" \
+               adminSourceAddressPrefix="<your-public-ip>/32"
 ```
 
 Get the public IP:
@@ -60,13 +93,16 @@ ssh <admin-user>@<public-ip>
 ## Validate Locally
 
 ```bash
+az bicep build --file az305-reference-architecture.bicep
+az bicep build --file az305-subscription-governance.bicep
 az bicep build --file pentest.bicep
 az bicep build --file pentest2.bicep
 ```
 
 ## Security Notes
 
-- Restrict `sourceAddressPrefix` to your own IP range before using this outside a temporary lab.
+- Keep `adminSourceAddressPrefix` restricted to your own IP range.
+- Prefer Bastion or private administration for VM access.
 - Rotate SSH keys and delete unused public IPs.
 - Patch the VM after deployment.
 - Remove the resource group when the lab is no longer needed.

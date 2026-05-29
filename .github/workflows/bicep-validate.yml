@@ -15,5 +15,4 @@ jobs:
 
       - name: Build Bicep templates
         run: |
-          az bicep build --file pentest.bicep
-          az bicep build --file pentest2.bicep
+          find . -name "*.bicep" -print0 | xargs -0 -n1 az bicep build --file
