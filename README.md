@@ -40,10 +40,16 @@ study, and authorized security lab deployments.
 | `modules/az305-compute-platform.bicep` | AKS, Container Apps, and Azure Functions compute decision examples. |
 | `modules/az305-app-integration-advanced.bicep` | API Management, App Configuration, Service Bus topics, and Event Hubs. |
 | `modules/az305-migration-toolkit.bicep` | Azure Migrate, Database Migration Service, migration workspace, storage, and move collection. |
+| `modules/az305-sentinel-soc.bicep` | Microsoft Sentinel workspace onboarding, analytics rule, automation rule, and Logic App playbook. |
+| `modules/az305-finops-governance.bicep` | Subscription budget, cost allocation tags, and FinOps policy initiative. |
+| `modules/az305-management-group-landing-zone.bicep` | Management-group landing-zone policy initiative and assignment. |
 | `params/*.bicepparam` | Scenario files for minimal, secure, hub-spoke, multi-region, and data-platform deployments. |
 | `pentest.bicep` | Hardened VM template for an authorized security lab. |
 | `pentest2.bicep` | Wrapper kept for compatibility with older commands. |
 | `docs/az-305-coverage.md` | Mapping between AZ-305 design objectives and repo assets. |
+| `docs/well-architected-matrix.md` | Azure Well-Architected Framework mapping. |
+| `docs/cloud-adoption-framework.md` | Cloud Adoption Framework alignment and landing-zone notes. |
+| `docs/runbooks/` | Operational runbooks for incident response, restore, failover, secret rotation, and cleanup. |
 | `scripts/` | PowerShell deployment and what-if helpers. |
 | `Resume/` | Static resume site assets. |
 | `.github/workflows/bicep-validate.yml` | CI check that builds all Bicep templates. |
@@ -164,6 +170,28 @@ Deploy migration toolkit scenario:
 .\scripts\deploy-migration-toolkit.ps1 -ResourceGroupName rg-az305-migrate-prod
 ```
 
+Deploy Sentinel/SOC scenario:
+
+```powershell
+.\scripts\deploy-sentinel-soc.ps1 -ResourceGroupName rg-az305-soc-prod
+```
+
+Deploy subscription-level FinOps controls:
+
+```powershell
+.\scripts\deploy-finops.ps1 `
+  -SubscriptionId "<subscription-id>" `
+  -BudgetContactEmail you@example.com `
+  -MonthlyBudgetAmount 100
+```
+
+Deploy management-group landing-zone controls:
+
+```powershell
+.\scripts\deploy-management-group-landing-zone.ps1 `
+  -ManagementGroupId "<management-group-id>"
+```
+
 Export a migration readiness inventory:
 
 ```powershell
@@ -218,6 +246,17 @@ Or run the local validation helper:
 ```powershell
 .\scripts\validate-az305.ps1
 ```
+
+Run repository tests:
+
+```powershell
+.\scripts\run-tests.ps1
+```
+
+GitHub Actions also validates Bicep files, parameter files, PowerShell syntax,
+and repository structure on push and pull request. The `Azure What-If` workflow
+can be run manually after configuring `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, and
+`AZURE_SUBSCRIPTION_ID` repository secrets for OIDC login.
 
 ## Security Notes
 

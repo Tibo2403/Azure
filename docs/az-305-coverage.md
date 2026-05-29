@@ -19,6 +19,9 @@ same architecture decisions.
 | Governance | `az305-subscription-governance.bicep` creates a resource group, custom tag policy assignment, and monthly budget. |
 | Policy initiative | `modules/az305-policy-initiative.bicep` defines a secure landing-zone initiative for allowed locations, required tags, public IP denial, and storage public access denial. |
 | Defender for Cloud | `modules/az305-defender-monitoring.bicep` enables Defender pricing plans and creates a security contact. |
+| Microsoft Sentinel | `modules/az305-sentinel-soc.bicep` adds Sentinel onboarding, an analytics rule, an automation rule, and a Logic App playbook. |
+| Management-group landing zone | `modules/az305-management-group-landing-zone.bicep` provides a management-group initiative and assignment for landing-zone governance. |
+| FinOps | `modules/az305-finops-governance.bicep` adds cost allocation policies and subscription budget notifications. |
 | Advanced identity and access | `modules/az305-identity-access.bicep` deploys workload, operations, and automation managed identities with scoped RBAC examples. |
 | Customer-managed keys | `modules/az305-identity-access.bicep` creates a Key Vault key that can be reused in CMK design exercises. |
 | Central observability | `modules/az305-observability-advanced.bicep` adds a central workspace, log archive storage, Event Hub routing, action group, activity log alert, and ingestion alert. |
@@ -68,6 +71,9 @@ same architecture decisions.
 | Migration design | `modules/az305-migration-toolkit.bicep` adds Azure Migrate, Database Migration Service, migration storage, and a move collection. |
 | Migration assessment | `scripts/assess-migration-readiness.ps1` exports a first-pass inventory with workload-specific migration recommendations. |
 | Automated deployment | PowerShell deployment and what-if scripts under `scripts/`, plus CI Bicep validation. |
+| CI/CD validation | `.github/workflows/bicep-validate.yml` builds Bicep, parameter files, validates PowerShell syntax, and runs Pester repository tests. |
+| Azure what-if | `.github/workflows/azure-whatif.yml` provides a manual OIDC-based what-if workflow for Azure deployments. |
+| Operational runbooks | `docs/runbooks/` documents incident response, backup restore, SQL failover, secret rotation, and lab cleanup. |
 
 ## Recommended Lab Flow
 
@@ -94,6 +100,9 @@ same architecture decisions.
 | Compute platform comparison | `params/compute-platform.dev.bicepparam` | `scripts/deploy-compute-platform.ps1` |
 | Application integration | `params/app-integration.prod.bicepparam` | `scripts/deploy-app-integration.ps1` |
 | Migration toolkit | `params/migration-toolkit.prod.bicepparam` | `scripts/deploy-migration-toolkit.ps1` |
+| Sentinel SOC | `params/sentinel-soc.prod.bicepparam` | `scripts/deploy-sentinel-soc.ps1` |
+| FinOps governance | `params/finops.prod.bicepparam` | `scripts/deploy-finops.ps1` |
+| Management-group landing zone | `params/management-group-landing-zone.bicepparam` | `scripts/deploy-management-group-landing-zone.ps1` |
 
 ## Design Decision Matrix
 
@@ -106,6 +115,8 @@ same architecture decisions.
 | Service Bus vs Event Hubs | Service Bus for commands and business workflows, Event Hubs for high-throughput telemetry streams | Messaging semantics differ from streaming ingestion |
 | API Management vs direct app exposure | API Management for governance, policies, and API lifecycle | Adds an extra managed gateway and cost |
 | Azure Migrate vs manual inventory | Azure Migrate for dependency-aware assessment | Requires appliance/discovery setup for full fidelity |
+| Sentinel vs Log Analytics only | Sentinel for SOC workflows, incidents, analytics, and automation | Additional ingestion and analytics cost |
+| Management group vs subscription policy | Management group for repeatable enterprise guardrails | Requires tenant hierarchy and elevated permissions |
 | LRS/ZRS/GRS | LRS for cost, ZRS for zone availability, GRS/RA-GRS for regional durability | Higher resiliency costs more |
 | Azure SQL failover group vs backup restore | Failover group for lower RTO/RPO | Requires secondary region and more cost |
 

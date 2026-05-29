@@ -13,6 +13,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build Bicep templates
+      - name: Ensure Bicep is available
         run: |
-          find . -name "*.bicep" -print0 | xargs -0 -n1 az bicep build --file
+          az bicep install
+
+      - name: Install Pester
+        shell: pwsh
+        run: |
+          Install-Module Pester -Scope CurrentUser -Force -SkipPublisherCheck
+
+      - name: Validate Bicep, parameter files, and scripts
+        shell: pwsh
+        run: |
+          ./scripts/validate-az305.ps1
+
+      - name: Run repository tests
+        shell: pwsh
+        run: |
+          ./scripts/run-tests.ps1

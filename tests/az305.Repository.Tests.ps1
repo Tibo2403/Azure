@@ -1,0 +1,39 @@
+Describe "AZ-305 repository production readiness" {
+  It "has GitHub validation and what-if workflows" {
+    Test-Path ".github/workflows/bicep-validate.yml" | Should Be $true
+    Test-Path ".github/workflows/azure-whatif.yml" | Should Be $true
+  }
+
+  It "has scenario parameter files for major AZ-305 themes" {
+    @(
+      "params/minimal.dev.bicepparam",
+      "params/secure.dev.bicepparam",
+      "params/hubspoke.prod.bicepparam",
+      "params/multiregion.prod.bicepparam",
+      "params/data-platform.prod.bicepparam",
+      "params/identity-access.prod.bicepparam",
+      "params/observability.prod.bicepparam",
+      "params/backup-dr.prod.bicepparam",
+      "params/compute-platform.dev.bicepparam",
+      "params/app-integration.prod.bicepparam",
+      "params/migration-toolkit.prod.bicepparam",
+      "params/sentinel-soc.prod.bicepparam",
+      "params/finops.prod.bicepparam"
+    ) | ForEach-Object { Test-Path $_ | Should Be $true }
+  }
+
+  It "has operational runbooks" {
+    @(
+      "docs/runbooks/incident-response.md",
+      "docs/runbooks/backup-restore.md",
+      "docs/runbooks/sql-failover.md",
+      "docs/runbooks/secret-rotation.md",
+      "docs/runbooks/lab-cleanup.md"
+    ) | ForEach-Object { Test-Path $_ | Should Be $true }
+  }
+
+  It "documents Well-Architected and CAF decisions" {
+    Test-Path "docs/well-architected-matrix.md" | Should Be $true
+    Test-Path "docs/cloud-adoption-framework.md" | Should Be $true
+  }
+}
