@@ -15,14 +15,27 @@ on:
         description: "Bicep parameter file"
         required: true
         default: "params/minimal.dev.bicepparam"
+      createResourceGroup:
+        description: "Create the resource group before running what-if"
+        required: true
+        default: "false"
+        type: choice
+        options:
+          - "false"
+          - "true"
 
 permissions:
   id-token: write
   contents: read
 
+concurrency:
+  group: azure-whatif-${{ github.event.inputs.resourceGroupName }}
+  cancel-in-progress: true
+
 jobs:
   whatif:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
 
     steps:
       - uses: actions/checkout@v4
@@ -35,6 +48,7 @@ jobs:
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Create resource group
+        if: ${{ github.event.inputs.createResourceGroup == 'true' }}
         run: |
           az group create \
             --name "${{ github.event.inputs.resourceGroupName }}" \

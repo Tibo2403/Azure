@@ -19,9 +19,14 @@ permissions:
   id-token: write
   contents: read
 
+concurrency:
+  group: azure-lab-cleanup-${{ github.event.inputs.resourceGroupName }}
+  cancel-in-progress: false
+
 jobs:
   cleanup:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     environment: azure-lab-cleanup
 
     steps:
