@@ -1,32 +1,9 @@
-function Assert-True {
-  param(
-    [bool] $Condition,
-    [string] $Message
-  )
-
-  if (-not $Condition) {
-    throw $Message
-  }
-}
-
-function Assert-Matches {
-  param(
-    [string] $Value,
-    [string] $Pattern,
-    [string] $Message
-  )
-
-  if ($Value -notmatch $Pattern) {
-    throw $Message
-  }
-}
-
 Describe "AZ-305 repository production readiness" {
   It "has GitHub validation and what-if workflows" {
-    Assert-True (Test-Path ".github/workflows/bicep-validate.yml") "Missing bicep validation workflow."
-    Assert-True (Test-Path ".github/workflows/azure-whatif.yml") "Missing Azure what-if workflow."
-    Assert-True (Test-Path ".github/workflows/codeql.yml") "Missing CodeQL workflow."
-    Assert-True (Test-Path ".github/workflows/lab-cleanup.yml") "Missing lab cleanup workflow."
+    if (-not (Test-Path ".github/workflows/bicep-validate.yml")) { throw "Missing bicep validation workflow." }
+    if (-not (Test-Path ".github/workflows/azure-whatif.yml")) { throw "Missing Azure what-if workflow." }
+    if (-not (Test-Path ".github/workflows/codeql.yml")) { throw "Missing CodeQL workflow." }
+    if (-not (Test-Path ".github/workflows/lab-cleanup.yml")) { throw "Missing lab cleanup workflow." }
   }
 
   It "has scenario parameter files for major AZ-305 themes" {
@@ -45,7 +22,9 @@ Describe "AZ-305 repository production readiness" {
       "params/sentinel-soc.prod.bicepparam",
       "params/finops.prod.bicepparam",
       "params/zero-public-access.prod.bicepparam"
-    ) | ForEach-Object { Assert-True (Test-Path $_) "Missing scenario parameter file: $_" }
+    ) | ForEach-Object {
+      if (-not (Test-Path $_)) { throw "Missing scenario parameter file: $_" }
+    }
   }
 
   It "has operational runbooks" {
@@ -55,16 +34,18 @@ Describe "AZ-305 repository production readiness" {
       "docs/runbooks/sql-failover.md",
       "docs/runbooks/secret-rotation.md",
       "docs/runbooks/lab-cleanup.md"
-    ) | ForEach-Object { Assert-True (Test-Path $_) "Missing runbook: $_" }
+    ) | ForEach-Object {
+      if (-not (Test-Path $_)) { throw "Missing runbook: $_" }
+    }
   }
 
   It "documents Well-Architected and CAF decisions" {
-    Assert-True (Test-Path "docs/well-architected-matrix.md") "Missing Well-Architected matrix."
-    Assert-True (Test-Path "docs/cloud-adoption-framework.md") "Missing CAF documentation."
-    Assert-True (Test-Path "docs/github-oidc-setup.md") "Missing GitHub OIDC setup documentation."
-    Assert-True (Test-Path "docs/az-305-study-notes.md") "Missing AZ-305 study notes."
-    Assert-True (Test-Path "docs/scenario-catalog.md") "Missing scenario catalog."
-    Assert-True (Test-Path "docs/portfolio-summary.md") "Missing portfolio summary."
+    if (-not (Test-Path "docs/well-architected-matrix.md")) { throw "Missing Well-Architected matrix." }
+    if (-not (Test-Path "docs/cloud-adoption-framework.md")) { throw "Missing CAF documentation." }
+    if (-not (Test-Path "docs/github-oidc-setup.md")) { throw "Missing GitHub OIDC setup documentation." }
+    if (-not (Test-Path "docs/az-305-study-notes.md")) { throw "Missing AZ-305 study notes." }
+    if (-not (Test-Path "docs/scenario-catalog.md")) { throw "Missing scenario catalog." }
+    if (-not (Test-Path "docs/portfolio-summary.md")) { throw "Missing portfolio summary." }
   }
 
   It "has architecture diagrams for core scenarios" {
@@ -74,13 +55,15 @@ Describe "AZ-305 repository production readiness" {
       "docs/diagrams/data-platform.md",
       "docs/diagrams/sentinel-soc.md",
       "docs/diagrams/migration-path.md"
-    ) | ForEach-Object { Assert-True (Test-Path $_) "Missing architecture diagram: $_" }
+    ) | ForEach-Object {
+      if (-not (Test-Path $_)) { throw "Missing architecture diagram: $_" }
+    }
   }
 
   It "has OIDC and cost cleanup helper scripts" {
-    Assert-True (Test-Path "scripts/setup-github-oidc.ps1") "Missing OIDC setup script."
-    Assert-True (Test-Path "scripts/list-costly-lab-resources.ps1") "Missing costly resource listing script."
-    Assert-True (Test-Path "scripts/deploy-zero-public-access.ps1") "Missing zero public access deployment script."
+    if (-not (Test-Path "scripts/setup-github-oidc.ps1")) { throw "Missing OIDC setup script." }
+    if (-not (Test-Path "scripts/list-costly-lab-resources.ps1")) { throw "Missing costly resource listing script." }
+    if (-not (Test-Path "scripts/deploy-zero-public-access.ps1")) { throw "Missing zero public access deployment script." }
   }
 
   It "has ADRs for major architecture decisions" {
@@ -90,20 +73,24 @@ Describe "AZ-305 repository production readiness" {
       "docs/adr/0003-compute-platform-choice.md",
       "docs/adr/0004-sentinel-for-soc.md",
       "docs/adr/0005-private-endpoints.md"
-    ) | ForEach-Object { Assert-True (Test-Path $_) "Missing ADR: $_" }
+    ) | ForEach-Object {
+      if (-not (Test-Path $_)) { throw "Missing ADR: $_" }
+    }
   }
 
   It "has task runner and sample outputs" {
-    Assert-True (Test-Path "Taskfile.yml") "Missing Taskfile."
-    Assert-True (Test-Path "docs/sample-outputs/validate-success.txt") "Missing validation sample output."
-    Assert-True (Test-Path "docs/sample-outputs/tests-success.txt") "Missing tests sample output."
-    Assert-True (Test-Path "modules/zero-public-access-assignment-rg.bicep") "Missing zero public access assignment module."
+    if (-not (Test-Path "Taskfile.yml")) { throw "Missing Taskfile." }
+    if (-not (Test-Path "docs/sample-outputs/validate-success.txt")) { throw "Missing validation sample output." }
+    if (-not (Test-Path "docs/sample-outputs/tests-success.txt")) { throw "Missing tests sample output." }
+    if (-not (Test-Path "modules/zero-public-access-assignment-rg.bicep")) { throw "Missing zero public access assignment module." }
   }
 
   It "keeps Bicep modules tagged" {
     Get-ChildItem -Path "modules" -Filter "az305-*.bicep" | ForEach-Object {
       $content = Get-Content -LiteralPath $_.FullName -Raw
-      Assert-Matches $content "param tags object|targetScope = 'managementGroup'|targetScope = 'subscription'" "Module is missing tags or explicit elevated scope: $($_.FullName)"
+      if ($content -notmatch "param tags object|targetScope = 'managementGroup'|targetScope = 'subscription'") {
+        throw "Module is missing tags or explicit elevated scope: $($_.FullName)"
+      }
     }
   }
 
@@ -116,7 +103,9 @@ Describe "AZ-305 repository production readiness" {
       "modules/az305-zero-public-access-policy.bicep"
     ) | ForEach-Object {
       $content = Get-Content -LiteralPath $_ -Raw
-      Assert-Matches $content "diagnosticSettings|OperationalInsights/workspaces|SecurityInsights|publicNetworkAccess|publicIPAddresses" "Critical module is missing observability or access controls: $_"
+      if ($content -notmatch "diagnosticSettings|OperationalInsights/workspaces|SecurityInsights|publicNetworkAccess|publicIPAddresses") {
+        throw "Critical module is missing observability or access controls: $_"
+      }
     }
   }
 }
