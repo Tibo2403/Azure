@@ -1,0 +1,5 @@
+AZ-305 local validation passed.
+
+Expected warnings:
+- Bicep no-hardcoded-env-urls warnings may appear for Azure public cloud private DNS zones.
+- These warnings are informational for this lab unless sovereign cloud support is required.

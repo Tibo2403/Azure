@@ -1,0 +1,11 @@
+Describing AZ-305 repository production readiness
+ [+] has GitHub validation and what-if workflows
+ [+] has scenario parameter files for major AZ-305 themes
+ [+] has operational runbooks
+ [+] documents Well-Architected and CAF decisions
+ [+] has architecture diagrams for core scenarios
+ [+] has OIDC and cost cleanup helper scripts
+ [+] keeps Bicep modules tagged
+ [+] keeps critical modules observable
+Tests completed
+Passed: 8 Failed: 0

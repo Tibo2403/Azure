@@ -22,6 +22,7 @@ same architecture decisions.
 | Microsoft Sentinel | `modules/az305-sentinel-soc.bicep` adds Sentinel onboarding, an analytics rule, an automation rule, and a Logic App playbook. |
 | Management-group landing zone | `modules/az305-management-group-landing-zone.bicep` provides a management-group initiative and assignment for landing-zone governance. |
 | FinOps | `modules/az305-finops-governance.bicep` adds cost allocation policies and subscription budget notifications. |
+| Zero public access | `modules/az305-zero-public-access-policy.bicep` adds a strict production baseline to deny public IPs and public access on sensitive services. |
 | Advanced identity and access | `modules/az305-identity-access.bicep` deploys workload, operations, and automation managed identities with scoped RBAC examples. |
 | Customer-managed keys | `modules/az305-identity-access.bicep` creates a Key Vault key that can be reused in CMK design exercises. |
 | Central observability | `modules/az305-observability-advanced.bicep` adds a central workspace, log archive storage, Event Hub routing, action group, activity log alert, and ingestion alert. |
@@ -81,6 +82,9 @@ same architecture decisions.
 | Operational runbooks | `docs/runbooks/` documents incident response, backup restore, SQL failover, secret rotation, and lab cleanup. |
 | Architecture diagrams | `docs/diagrams/` provides Mermaid diagrams for hub-spoke, multi-region, data platform, Sentinel, and migration paths. |
 | Study notes | `docs/az-305-study-notes.md` summarizes key design choices by AZ-305 domain. |
+| Scenario catalog | `docs/scenario-catalog.md` lists scenarios, cost profiles, deploy commands, and cleanup commands. |
+| Architecture decisions | `docs/adr/` records major platform decisions and tradeoffs. |
+| Portfolio summary | `docs/portfolio-summary.md` presents the repo as an Azure Architect portfolio project. |
 
 ## Recommended Lab Flow
 
@@ -110,6 +114,7 @@ same architecture decisions.
 | Sentinel SOC | `params/sentinel-soc.prod.bicepparam` | `scripts/deploy-sentinel-soc.ps1` |
 | FinOps governance | `params/finops.prod.bicepparam` | `scripts/deploy-finops.ps1` |
 | Management-group landing zone | `params/management-group-landing-zone.bicepparam` | `scripts/deploy-management-group-landing-zone.ps1` |
+| Zero public access baseline | `params/zero-public-access.prod.bicepparam` | `scripts/deploy-zero-public-access.ps1` |
 
 ## Design Decision Matrix
 

@@ -1,0 +1,32 @@
+version: "3"
+
+tasks:
+  validate:
+    desc: Build all Bicep templates, parameter files, and parse PowerShell scripts.
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/validate-az305.ps1
+
+  test:
+    desc: Run repository Pester tests.
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/run-tests.ps1
+
+  whatif:minimal:
+    desc: Run a what-if for the minimal AZ-305 reference architecture.
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/whatif-az305.ps1 -ResourceGroupName rg-az305-reference-dev
+
+  deploy:minimal:
+    desc: Deploy the minimal AZ-305 reference architecture.
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/deploy-minimal.ps1 -ResourceGroupName rg-az305-reference-dev
+
+  deploy:secure:
+    desc: Deploy the secure private-endpoint scenario.
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/deploy-secure.ps1 -ResourceGroupName rg-az305-secure-dev
+
+  cleanup:minimal:
+    desc: Delete the minimal AZ-305 lab resource group.
+    cmds:
+      - powershell -NoProfile -ExecutionPolicy Bypass -File ./scripts/destroy-lab.ps1 -ResourceGroupName rg-az305-reference-dev -NoWait

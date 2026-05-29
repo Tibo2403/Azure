@@ -1,5 +1,9 @@
 # Azure Architecture Labs
 
+[![Bicep Validation](https://github.com/Tibo2403/Azure/actions/workflows/bicep-validate.yml/badge.svg)](https://github.com/Tibo2403/Azure/actions/workflows/bicep-validate.yml)
+[![CodeQL](https://github.com/Tibo2403/Azure/actions/workflows/codeql.yml/badge.svg)](https://github.com/Tibo2403/Azure/actions/workflows/codeql.yml)
+[![Azure What-If](https://github.com/Tibo2403/Azure/actions/workflows/azure-whatif.yml/badge.svg)](https://github.com/Tibo2403/Azure/actions/workflows/azure-whatif.yml)
+
 This repository contains Azure Bicep templates for architecture practice, AZ-305
 study, and authorized security lab deployments.
 
@@ -43,6 +47,7 @@ study, and authorized security lab deployments.
 | `modules/az305-sentinel-soc.bicep` | Microsoft Sentinel workspace onboarding, analytics rule, automation rule, and Logic App playbook. |
 | `modules/az305-finops-governance.bicep` | Subscription budget, cost allocation tags, and FinOps policy initiative. |
 | `modules/az305-management-group-landing-zone.bicep` | Management-group landing-zone policy initiative and assignment. |
+| `modules/az305-zero-public-access-policy.bicep` | Strict production policy baseline for private access by default. |
 | `params/*.bicepparam` | Scenario files for minimal, secure, hub-spoke, multi-region, and data-platform deployments. |
 | `pentest.bicep` | Hardened VM template for an authorized security lab. |
 | `pentest2.bicep` | Wrapper kept for compatibility with older commands. |
@@ -51,6 +56,10 @@ study, and authorized security lab deployments.
 | `docs/cloud-adoption-framework.md` | Cloud Adoption Framework alignment and landing-zone notes. |
 | `docs/github-oidc-setup.md` | GitHub Actions OIDC setup for Azure deployments without client secrets. |
 | `docs/az-305-study-notes.md` | Short AZ-305 decision notes by exam domain. |
+| `docs/scenario-catalog.md` | Scenario catalog with scope, cost profile, deploy command, and cleanup command. |
+| `docs/portfolio-summary.md` | Portfolio-oriented summary for explaining the project. |
+| `docs/adr/` | Architecture Decision Records for major platform decisions. |
+| `docs/sample-outputs/` | Sample validation and test outputs. |
 | `docs/diagrams/` | Mermaid diagrams for hub-spoke, multi-region, data, Sentinel, and migration scenarios. |
 | `docs/runbooks/` | Operational runbooks for incident response, restore, failover, secret rotation, and cleanup. |
 | `scripts/` | PowerShell deployment and what-if helpers. |
@@ -195,6 +204,15 @@ Deploy management-group landing-zone controls:
   -ManagementGroupId "<management-group-id>"
 ```
 
+Deploy zero-public-access production policy baseline:
+
+```powershell
+.\scripts\deploy-zero-public-access.ps1 `
+  -SubscriptionId "<subscription-id>" `
+  -ResourceGroupName rg-az305-secure-prod `
+  -EnforcementMode DoNotEnforce
+```
+
 Export a migration readiness inventory:
 
 ```powershell
@@ -278,6 +296,16 @@ List potentially expensive AZ-305 lab resources:
 
 The repo also includes CodeQL, secret scanning configuration, and a manual
 `Azure Lab Cleanup` workflow for controlled cleanup of lab resource groups.
+
+Use the optional Taskfile shortcuts:
+
+```powershell
+task validate
+task test
+task whatif:minimal
+task deploy:minimal
+task cleanup:minimal
+```
 
 ## Security Notes
 
