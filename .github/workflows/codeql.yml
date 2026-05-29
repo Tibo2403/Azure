@@ -4,7 +4,13 @@ on:
   push:
     branches:
       - main
+    paths:
+      - ".github/workflows/**"
+      - ".github/actions/**"
   pull_request:
+    paths:
+      - ".github/workflows/**"
+      - ".github/actions/**"
   schedule:
     - cron: "24 3 * * 1"
 

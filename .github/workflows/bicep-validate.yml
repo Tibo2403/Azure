@@ -4,7 +4,23 @@ on:
   push:
     branches:
       - main
+    paths:
+      - "**/*.bicep"
+      - "**/*.bicepparam"
+      - "bicepconfig.json"
+      - "scripts/**"
+      - "tests/**"
+      - "Taskfile.yml"
+      - ".github/workflows/bicep-validate.yml"
   pull_request:
+    paths:
+      - "**/*.bicep"
+      - "**/*.bicepparam"
+      - "bicepconfig.json"
+      - "scripts/**"
+      - "tests/**"
+      - "Taskfile.yml"
+      - ".github/workflows/bicep-validate.yml"
 
 permissions:
   contents: read

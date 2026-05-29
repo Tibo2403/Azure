@@ -6,6 +6,29 @@ Describe "AZ-305 repository production readiness" {
     if (-not (Test-Path ".github/workflows/lab-cleanup.yml")) { throw "Missing lab cleanup workflow." }
   }
 
+  It "keeps GitHub workflows cost guarded" {
+    @(
+      ".github/workflows/bicep-validate.yml",
+      ".github/workflows/codeql.yml",
+      ".github/workflows/azure-whatif.yml",
+      ".github/workflows/lab-cleanup.yml"
+    ) | ForEach-Object {
+      $content = Get-Content -LiteralPath $_ -Raw
+      if ($content -notmatch "timeout-minutes:") { throw "Missing timeout-minutes in workflow: $_" }
+      if ($content -notmatch "concurrency:") { throw "Missing concurrency guard in workflow: $_" }
+    }
+
+    $bicepValidation = Get-Content -LiteralPath ".github/workflows/bicep-validate.yml" -Raw
+    if ($bicepValidation -notmatch "paths:") {
+      throw "Bicep validation should use paths filters to avoid running on documentation-only changes."
+    }
+
+    $azureWhatIf = Get-Content -LiteralPath ".github/workflows/azure-whatif.yml" -Raw
+    if ($azureWhatIf -notmatch "createResourceGroup:") {
+      throw "Azure What-If should require an explicit createResourceGroup input."
+    }
+  }
+
   It "has scenario parameter files for major AZ-305 themes" {
     @(
       "params/minimal.dev.bicepparam",
