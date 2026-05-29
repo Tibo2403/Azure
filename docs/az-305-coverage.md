@@ -19,6 +19,9 @@ same architecture decisions.
 | Governance | `az305-subscription-governance.bicep` creates a resource group, custom tag policy assignment, and monthly budget. |
 | Policy initiative | `modules/az305-policy-initiative.bicep` defines a secure landing-zone initiative for allowed locations, required tags, public IP denial, and storage public access denial. |
 | Defender for Cloud | `modules/az305-defender-monitoring.bicep` enables Defender pricing plans and creates a security contact. |
+| Advanced identity and access | `modules/az305-identity-access.bicep` deploys workload, operations, and automation managed identities with scoped RBAC examples. |
+| Customer-managed keys | `modules/az305-identity-access.bicep` creates a Key Vault key that can be reused in CMK design exercises. |
+| Central observability | `modules/az305-observability-advanced.bicep` adds a central workspace, log archive storage, Event Hub routing, action group, activity log alert, and ingestion alert. |
 | Tagging | All templates merge standard tags: `environment`, `certification`, `managedBy`, and workload tags. |
 
 ## Data Storage
@@ -38,6 +41,9 @@ same architecture decisions.
 | AZ-305 concern | Repo implementation |
 | --- | --- |
 | Backup and disaster recovery | Recovery Services vault, geo-redundant backup storage configuration, VM backup policy, and diagnostics. |
+| Advanced backup policy | `modules/az305-backup-dr-advanced.bicep` adds daily, weekly, and monthly VM retention examples. |
+| Azure Site Recovery design | `modules/az305-backup-dr-advanced.bicep` includes an A2A replication policy placeholder for DR planning. |
+| Modern backup services | `modules/az305-backup-dr-advanced.bicep` includes a Data Protection backup vault for newer workload backup patterns. |
 | High availability design | App Service, Storage GRS, and optional Bastion are included as design examples. |
 | Multi-region application continuity | `modules/az305-multiregion-frontdoor.bicep` deploys primary/secondary App Services behind Azure Front Door and WAF. |
 | SQL continuity | `modules/az305-multiregion-frontdoor.bicep` includes an Azure SQL failover group. |
@@ -48,12 +54,19 @@ same architecture decisions.
 | AZ-305 concern | Repo implementation |
 | --- | --- |
 | Compute | Optional Linux VM, App Service with autoscale settings, and Container Registry examples. |
+| Container platform | `modules/az305-compute-platform.bicep` adds AKS and Container Apps as container design alternatives. |
+| Serverless platform | `modules/az305-compute-platform.bicep` adds Azure Functions with a dedicated storage account. |
 | Network design | Segmented VNet with app, data, private endpoint, App Gateway, and Bastion subnets. |
 | Network security | NSGs, closed-by-default SSH source CIDR, no VM public IP by default, optional Bastion, optional NAT Gateway, and optional private endpoints. |
 | Load balancing and routing | Optional Application Gateway WAF v2 scenario. |
 | Enterprise network topology | `modules/az305-hub-spoke-network.bicep` provides hub, app spoke, data spoke, peering, Azure Firewall, UDRs, and centralized private DNS. |
 | Global routing and WAF | `modules/az305-multiregion-frontdoor.bicep` provides Azure Front Door Standard and WAF policy. |
 | Messaging and eventing | Service Bus queue and Event Grid topic examples. |
+| API integration | `modules/az305-app-integration-advanced.bicep` adds API Management Consumption tier. |
+| Application configuration | `modules/az305-app-integration-advanced.bicep` adds Azure App Configuration. |
+| Streaming and pub/sub | `modules/az305-app-integration-advanced.bicep` adds Event Hubs and Service Bus topic/subscription examples. |
+| Migration design | `modules/az305-migration-toolkit.bicep` adds Azure Migrate, Database Migration Service, migration storage, and a move collection. |
+| Migration assessment | `scripts/assess-migration-readiness.ps1` exports a first-pass inventory with workload-specific migration recommendations. |
 | Automated deployment | PowerShell deployment and what-if scripts under `scripts/`, plus CI Bicep validation. |
 
 ## Recommended Lab Flow
@@ -75,6 +88,12 @@ same architecture decisions.
 | Hub-spoke production topology | `params/hubspoke.prod.bicepparam` | `scripts/deploy-hubspoke.ps1` |
 | Multi-region production topology | `params/multiregion.prod.bicepparam` | `scripts/deploy-multiregion.ps1` |
 | Advanced data platform | `params/data-platform.prod.bicepparam` | `scripts/deploy-data-platform.ps1` |
+| Identity and scoped access | `params/identity-access.prod.bicepparam` | `scripts/deploy-identity-access.ps1` |
+| Observability and log routing | `params/observability.prod.bicepparam` | `scripts/deploy-observability.ps1` |
+| Backup and disaster recovery | `params/backup-dr.prod.bicepparam` | `scripts/deploy-backup-dr.ps1` |
+| Compute platform comparison | `params/compute-platform.dev.bicepparam` | `scripts/deploy-compute-platform.ps1` |
+| Application integration | `params/app-integration.prod.bicepparam` | `scripts/deploy-app-integration.ps1` |
+| Migration toolkit | `params/migration-toolkit.prod.bicepparam` | `scripts/deploy-migration-toolkit.ps1` |
 
 ## Design Decision Matrix
 
@@ -84,6 +103,9 @@ same architecture decisions.
 | Bastion vs public SSH | Bastion | Higher cost, better exposure reduction |
 | Front Door vs Application Gateway | Front Door for global entry, Application Gateway for regional L7 | Different scopes and WAF placements |
 | App Service vs Container Apps vs AKS | App Service for simple web workloads, Container Apps for event-driven containers, AKS for platform teams | Control and complexity increase toward AKS |
+| Service Bus vs Event Hubs | Service Bus for commands and business workflows, Event Hubs for high-throughput telemetry streams | Messaging semantics differ from streaming ingestion |
+| API Management vs direct app exposure | API Management for governance, policies, and API lifecycle | Adds an extra managed gateway and cost |
+| Azure Migrate vs manual inventory | Azure Migrate for dependency-aware assessment | Requires appliance/discovery setup for full fidelity |
 | LRS/ZRS/GRS | LRS for cost, ZRS for zone availability, GRS/RA-GRS for regional durability | Higher resiliency costs more |
 | Azure SQL failover group vs backup restore | Failover group for lower RTO/RPO | Requires secondary region and more cost |
 

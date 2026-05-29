@@ -34,6 +34,12 @@ study, and authorized security lab deployments.
 | `modules/az305-advanced-data.bicep` | Cosmos DB, Redis, immutable storage, lifecycle management. |
 | `modules/az305-policy-initiative.bicep` | Subscription-scope policy initiative for location, tags, public IP, and storage public access. |
 | `modules/az305-defender-monitoring.bicep` | Defender for Cloud plans and security contact. |
+| `modules/az305-identity-access.bicep` | Managed identities, scoped RBAC examples, Key Vault, and customer-managed key. |
+| `modules/az305-observability-advanced.bicep` | Central Log Analytics, archive storage, Event Hub log routing, Action Group, and activity log alert. |
+| `modules/az305-backup-dr-advanced.bicep` | Recovery Services vault, VM backup retention, Data Protection vault, ASR policy, and automation account. |
+| `modules/az305-compute-platform.bicep` | AKS, Container Apps, and Azure Functions compute decision examples. |
+| `modules/az305-app-integration-advanced.bicep` | API Management, App Configuration, Service Bus topics, and Event Hubs. |
+| `modules/az305-migration-toolkit.bicep` | Azure Migrate, Database Migration Service, migration workspace, storage, and move collection. |
 | `params/*.bicepparam` | Scenario files for minimal, secure, hub-spoke, multi-region, and data-platform deployments. |
 | `pentest.bicep` | Hardened VM template for an authorized security lab. |
 | `pentest2.bicep` | Wrapper kept for compatibility with older commands. |
@@ -116,6 +122,54 @@ Deploy advanced data platform:
 
 ```powershell
 .\scripts\deploy-data-platform.ps1 -ResourceGroupName rg-az305-data-prod
+```
+
+Deploy identity and scoped access scenario:
+
+```powershell
+.\scripts\deploy-identity-access.ps1 `
+  -ResourceGroupName rg-az305-identity-prod `
+  -AdminPrincipalObjectId "<entra-object-id>"
+```
+
+Deploy advanced observability and log routing:
+
+```powershell
+.\scripts\deploy-observability.ps1 `
+  -ResourceGroupName rg-az305-observability-prod `
+  -AlertEmailAddress you@example.com
+```
+
+Deploy backup and disaster recovery scenario:
+
+```powershell
+.\scripts\deploy-backup-dr.ps1 -ResourceGroupName rg-az305-dr-prod
+```
+
+Deploy compute platform comparison:
+
+```powershell
+.\scripts\deploy-compute-platform.ps1 -ResourceGroupName rg-az305-compute-dev
+```
+
+Deploy application integration scenario:
+
+```powershell
+.\scripts\deploy-app-integration.ps1 -ResourceGroupName rg-az305-appint-prod
+```
+
+Deploy migration toolkit scenario:
+
+```powershell
+.\scripts\deploy-migration-toolkit.ps1 -ResourceGroupName rg-az305-migrate-prod
+```
+
+Export a migration readiness inventory:
+
+```powershell
+.\scripts\assess-migration-readiness.ps1 `
+  -SubscriptionId "<subscription-id>" `
+  -OutputPath .\migration-readiness.csv
 ```
 
 For details, see [`docs/az-305-coverage.md`](docs/az-305-coverage.md).
