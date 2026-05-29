@@ -29,6 +29,12 @@ study, and authorized security lab deployments.
 | `modules/az305-data-platform.bicep` | Storage, Azure SQL, retention, auditing, diagnostics, and optional private endpoints. |
 | `modules/az305-integration.bicep` | Service Bus, Event Grid, Data Factory, and diagnostics. |
 | `modules/az305-business-continuity.bicep` | Recovery Services vault, backup policy, and diagnostics. |
+| `modules/az305-hub-spoke-network.bicep` | Enterprise hub-spoke with firewall policy, peering, route tables, and private DNS zones. |
+| `modules/az305-multiregion-frontdoor.bicep` | Multi-region App Service, Azure Front Door, WAF, and SQL failover group. |
+| `modules/az305-advanced-data.bicep` | Cosmos DB, Redis, immutable storage, lifecycle management. |
+| `modules/az305-policy-initiative.bicep` | Subscription-scope policy initiative for location, tags, public IP, and storage public access. |
+| `modules/az305-defender-monitoring.bicep` | Defender for Cloud plans and security contact. |
+| `params/*.bicepparam` | Scenario files for minimal, secure, hub-spoke, multi-region, and data-platform deployments. |
 | `pentest.bicep` | Hardened VM template for an authorized security lab. |
 | `pentest2.bicep` | Wrapper kept for compatibility with older commands. |
 | `docs/az-305-coverage.md` | Mapping between AZ-305 design objectives and repo assets. |
@@ -92,6 +98,24 @@ Deploy an ingress/WAF scenario:
   -ResourceGroupName rg-az305-waf-dev `
   -DeployApplicationGatewayWaf `
   -AlertEmailAddress you@example.com
+```
+
+Deploy enterprise hub-spoke:
+
+```powershell
+.\scripts\deploy-hubspoke.ps1 -ResourceGroupName rg-az305-hubspoke-prod
+```
+
+Deploy multi-region Front Door and SQL failover:
+
+```powershell
+.\scripts\deploy-multiregion.ps1 -ResourceGroupName rg-az305-multiregion-prod
+```
+
+Deploy advanced data platform:
+
+```powershell
+.\scripts\deploy-data-platform.ps1 -ResourceGroupName rg-az305-data-prod
 ```
 
 For details, see [`docs/az-305-coverage.md`](docs/az-305-coverage.md).

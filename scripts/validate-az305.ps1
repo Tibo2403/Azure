@@ -11,6 +11,12 @@ foreach ($template in $templates) {
   & $BicepPath build $template.FullName
 }
 
+$parameterFiles = Get-ChildItem -Path .\params -Recurse -Filter *.bicepparam -ErrorAction SilentlyContinue
+foreach ($parameterFile in $parameterFiles) {
+  Write-Host "Building parameters $($parameterFile.FullName)"
+  & $BicepPath build-params $parameterFile.FullName
+}
+
 $errors = @()
 Get-ChildItem -Path .\scripts -Filter *.ps1 | ForEach-Object {
   $tokens = $null
