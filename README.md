@@ -22,6 +22,13 @@ study, and authorized security lab deployments.
 | --- | --- |
 | `az305-reference-architecture.bicep` | Resource-group scoped AZ-305 reference architecture. |
 | `az305-subscription-governance.bicep` | Subscription-scoped governance and budget template. |
+| `modules/az305-monitoring-governance.bicep` | Log Analytics, Application Insights, Action Group, and alert example. |
+| `modules/az305-networking.bicep` | Segmented VNet, NSGs, optional NAT Gateway, Bastion, and Application Gateway WAF. |
+| `modules/az305-identity-security.bicep` | Managed identity, Key Vault, diagnostics, and optional private endpoint. |
+| `modules/az305-compute-app.bicep` | App Service, autoscale, optional VM, ACR, diagnostics, and optional private endpoint. |
+| `modules/az305-data-platform.bicep` | Storage, Azure SQL, retention, auditing, diagnostics, and optional private endpoints. |
+| `modules/az305-integration.bicep` | Service Bus, Event Grid, Data Factory, and diagnostics. |
+| `modules/az305-business-continuity.bicep` | Recovery Services vault, backup policy, and diagnostics. |
 | `pentest.bicep` | Hardened VM template for an authorized security lab. |
 | `pentest2.bicep` | Wrapper kept for compatibility with older commands. |
 | `docs/az-305-coverage.md` | Mapping between AZ-305 design objectives and repo assets. |
@@ -56,6 +63,35 @@ Deploy the resource-group architecture:
 
 ```powershell
 .\scripts\deploy-az305.ps1 -ResourceGroupName rg-az305-reference-dev
+```
+
+Deploy a more secure network/data scenario:
+
+```powershell
+.\scripts\deploy-az305.ps1 `
+  -ResourceGroupName rg-az305-secure-dev `
+  -DeployPrivateEndpoints `
+  -DeployNatGateway `
+  -DeploySql
+```
+
+Deploy with VM administration through Bastion:
+
+```powershell
+.\scripts\deploy-az305.ps1 `
+  -ResourceGroupName rg-az305-vm-dev `
+  -DeployVm `
+  -DeployBastion `
+  -SshPublicKeyPath "$HOME\.ssh\id_rsa.pub"
+```
+
+Deploy an ingress/WAF scenario:
+
+```powershell
+.\scripts\deploy-az305.ps1 `
+  -ResourceGroupName rg-az305-waf-dev `
+  -DeployApplicationGatewayWaf `
+  -AlertEmailAddress you@example.com
 ```
 
 For details, see [`docs/az-305-coverage.md`](docs/az-305-coverage.md).
@@ -97,6 +133,12 @@ az bicep build --file az305-reference-architecture.bicep
 az bicep build --file az305-subscription-governance.bicep
 az bicep build --file pentest.bicep
 az bicep build --file pentest2.bicep
+```
+
+Or run the local validation helper:
+
+```powershell
+.\scripts\validate-az305.ps1
 ```
 
 ## Security Notes

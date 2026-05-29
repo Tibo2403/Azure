@@ -14,6 +14,8 @@ param(
 
   [string] $AdminSourceAddressPrefix = "0.0.0.0/32",
 
+  [string] $AlertEmailAddress = "",
+
   [switch] $DeployVm,
 
   [string] $VmAdminUsername = "azureadmin",
@@ -23,6 +25,16 @@ param(
   [switch] $DeployPublicIpForVm,
 
   [switch] $DeployBastion,
+
+  [switch] $DeployNatGateway,
+
+  [switch] $DeployApplicationGatewayWaf,
+
+  [switch] $DeployPrivateEndpoints,
+
+  [switch] $DeploySql,
+
+  [securestring] $SqlAdministratorPassword,
 
   [switch] $DeployDeleteLock
 )
@@ -37,6 +49,14 @@ if ($DeployVm) {
   $sshPublicKey = Get-Content -LiteralPath $SshPublicKeyPath -Raw
 }
 
+$sqlPassword = ""
+if ($DeploySql) {
+  if (-not $SqlAdministratorPassword) {
+    $SqlAdministratorPassword = Read-Host "SQL administrator password" -AsSecureString
+  }
+  $sqlPassword = [System.Net.NetworkCredential]::new("", $SqlAdministratorPassword).Password
+}
+
 az group create `
   --name $ResourceGroupName `
   --location $Location `
@@ -46,11 +66,17 @@ az deployment group create `
   --resource-group $ResourceGroupName `
   --template-file $TemplateFile `
   --parameters workloadName=$WorkloadName `
-               environment=$Environment `
-               adminSourceAddressPrefix=$AdminSourceAddressPrefix `
-               deployVm=$DeployVm.IsPresent `
-               vmAdminUsername=$VmAdminUsername `
-               sshPublicKey="$sshPublicKey" `
-               deployPublicIpForVm=$DeployPublicIpForVm.IsPresent `
-               deployBastion=$DeployBastion.IsPresent `
-               deployDeleteLock=$DeployDeleteLock.IsPresent
+    environment=$Environment `
+    adminSourceAddressPrefix=$AdminSourceAddressPrefix `
+    alertEmailAddress=$AlertEmailAddress `
+    deployVm=$DeployVm.IsPresent `
+    vmAdminUsername=$VmAdminUsername `
+    sshPublicKey="$sshPublicKey" `
+    deployPublicIpForVm=$DeployPublicIpForVm.IsPresent `
+    deployBastion=$DeployBastion.IsPresent `
+    deployNatGateway=$DeployNatGateway.IsPresent `
+    deployApplicationGatewayWaf=$DeployApplicationGatewayWaf.IsPresent `
+    deployPrivateEndpoints=$DeployPrivateEndpoints.IsPresent `
+    deploySql=$DeploySql.IsPresent `
+    sqlAdministratorPassword="$sqlPassword" `
+    deployDeleteLock=$DeployDeleteLock.IsPresent
