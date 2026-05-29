@@ -49,6 +49,9 @@ study, and authorized security lab deployments.
 | `docs/az-305-coverage.md` | Mapping between AZ-305 design objectives and repo assets. |
 | `docs/well-architected-matrix.md` | Azure Well-Architected Framework mapping. |
 | `docs/cloud-adoption-framework.md` | Cloud Adoption Framework alignment and landing-zone notes. |
+| `docs/github-oidc-setup.md` | GitHub Actions OIDC setup for Azure deployments without client secrets. |
+| `docs/az-305-study-notes.md` | Short AZ-305 decision notes by exam domain. |
+| `docs/diagrams/` | Mermaid diagrams for hub-spoke, multi-region, data, Sentinel, and migration scenarios. |
 | `docs/runbooks/` | Operational runbooks for incident response, restore, failover, secret rotation, and cleanup. |
 | `scripts/` | PowerShell deployment and what-if helpers. |
 | `Resume/` | Static resume site assets. |
@@ -257,6 +260,24 @@ GitHub Actions also validates Bicep files, parameter files, PowerShell syntax,
 and repository structure on push and pull request. The `Azure What-If` workflow
 can be run manually after configuring `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, and
 `AZURE_SUBSCRIPTION_ID` repository secrets for OIDC login.
+
+Configure GitHub OIDC for Azure workflows:
+
+```powershell
+.\scripts\setup-github-oidc.ps1 `
+  -GitHubOrg "Tibo2403" `
+  -GitHubRepo "Azure" `
+  -SubscriptionId "<subscription-id>"
+```
+
+List potentially expensive AZ-305 lab resources:
+
+```powershell
+.\scripts\list-costly-lab-resources.ps1 -SubscriptionId "<subscription-id>"
+```
+
+The repo also includes CodeQL, secret scanning configuration, and a manual
+`Azure Lab Cleanup` workflow for controlled cleanup of lab resource groups.
 
 ## Security Notes
 

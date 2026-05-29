@@ -73,7 +73,14 @@ same architecture decisions.
 | Automated deployment | PowerShell deployment and what-if scripts under `scripts/`, plus CI Bicep validation. |
 | CI/CD validation | `.github/workflows/bicep-validate.yml` builds Bicep, parameter files, validates PowerShell syntax, and runs Pester repository tests. |
 | Azure what-if | `.github/workflows/azure-whatif.yml` provides a manual OIDC-based what-if workflow for Azure deployments. |
+| Code scanning | `.github/workflows/codeql.yml` adds CodeQL scanning for GitHub Actions workflow security. |
+| Secret scanning | `.github/secret-scanning.yml` configures repository secret scanning path behavior. |
+| Lab cleanup automation | `.github/workflows/lab-cleanup.yml` provides a manual OIDC-based cleanup workflow for lab resource groups. |
+| GitHub OIDC setup | `scripts/setup-github-oidc.ps1` and `docs/github-oidc-setup.md` document federated Azure login setup. |
+| Cost cleanup | `scripts/list-costly-lab-resources.ps1` lists AZ-305-tagged resources that commonly drive lab costs. |
 | Operational runbooks | `docs/runbooks/` documents incident response, backup restore, SQL failover, secret rotation, and lab cleanup. |
+| Architecture diagrams | `docs/diagrams/` provides Mermaid diagrams for hub-spoke, multi-region, data platform, Sentinel, and migration paths. |
+| Study notes | `docs/az-305-study-notes.md` summarizes key design choices by AZ-305 domain. |
 
 ## Recommended Lab Flow
 
