@@ -19,6 +19,14 @@ var dataSpokeName = 'vnet-${prefix}-spoke-data'
 var firewallName = 'afw-${prefix}'
 var firewallPolicyName = 'afwp-${prefix}'
 var firewallPrivateIp = '10.50.0.4'
+var blobPrivateDnsZoneName = 'privatelink.blob.${environment().suffixes.storage}'
+var sqlPrivateDnsZoneName = 'privatelink.${environment().suffixes.sqlServerHostname}'
+var privateDnsZoneNames = [
+  'privatelink.vaultcore.azure.net'
+  blobPrivateDnsZoneName
+  sqlPrivateDnsZoneName
+  'privatelink.azurecr.io'
+]
 
 resource ddosPlan 'Microsoft.Network/ddosProtectionPlans@2023-09-01' = if (deployDdosProtection) {
   name: 'ddos-${prefix}'
@@ -301,23 +309,13 @@ resource hubToDataPeering 'Microsoft.Network/virtualNetworks/virtualNetworkPeeri
   }
 }
 
-resource privateDnsZones 'Microsoft.Network/privateDnsZones@2020-06-01' = [for zoneName in [
-  'privatelink.vaultcore.azure.net'
-  'privatelink.blob.core.windows.net'
-  'privatelink.database.windows.net'
-  'privatelink.azurecr.io'
-]: {
+resource privateDnsZones 'Microsoft.Network/privateDnsZones@2020-06-01' = [for zoneName in privateDnsZoneNames: {
   name: zoneName
   location: 'global'
   tags: tags
 }]
 
-resource privateDnsHubLinks 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = [for (zoneName, index) in [
-  'privatelink.vaultcore.azure.net'
-  'privatelink.blob.core.windows.net'
-  'privatelink.database.windows.net'
-  'privatelink.azurecr.io'
-]: {
+resource privateDnsHubLinks 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = [for (zoneName, index) in privateDnsZoneNames: {
   parent: privateDnsZones[index]
   name: 'link-hub'
   location: 'global'

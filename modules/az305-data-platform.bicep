@@ -35,6 +35,8 @@ param tags object
 var storageName = 'st${take(uniqueString(resourceGroup().id, prefix), 18)}'
 var sqlServerName = 'sql-${prefix}-${suffix}'
 var sqlDbName = 'sqldb-${prefix}'
+var blobPrivateDnsZoneName = 'privatelink.blob.${environment().suffixes.storage}'
+var sqlPrivateDnsZoneName = 'privatelink.${environment().suffixes.sqlServerHostname}'
 
 resource storage 'Microsoft.Storage/storageAccounts@2023-01-01' = if (deployStorage) {
   name: storageName
@@ -104,7 +106,7 @@ resource storageDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-pr
 }
 
 resource blobPrivateDns 'Microsoft.Network/privateDnsZones@2020-06-01' = if (deployStorage && deployPrivateEndpoints) {
-  name: 'privatelink.blob.core.windows.net'
+  name: blobPrivateDnsZoneName
   location: 'global'
   tags: tags
 }
@@ -227,7 +229,7 @@ resource sqlDiagnostics 'Microsoft.Insights/diagnosticSettings@2021-05-01-previe
 }
 
 resource sqlPrivateDns 'Microsoft.Network/privateDnsZones@2020-06-01' = if (deploySql && deployPrivateEndpoints) {
-  name: 'privatelink.database.windows.net'
+  name: sqlPrivateDnsZoneName
   location: 'global'
   tags: tags
 }
