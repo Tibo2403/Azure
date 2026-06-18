@@ -30,7 +30,7 @@ jobs:
     environment: azure-lab-cleanup
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Azure login
         uses: azure/login@v3
