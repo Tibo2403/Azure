@@ -89,6 +89,30 @@ Describe "AZ-305 repository production readiness" {
     if (-not (Test-Path "scripts/deploy-zero-public-access.ps1")) { throw "Missing zero public access deployment script." }
   }
 
+  It "keeps lab cleanup script guarded against accidental deletion" {
+    $content = Get-Content -LiteralPath "scripts/destroy-lab.ps1" -Raw
+
+    if ($content -notmatch "SupportsShouldProcess") {
+      throw "Lab cleanup script should support WhatIf/Confirm semantics."
+    }
+
+    if (-not $content.Contains('[string] $SubscriptionId')) {
+      throw "Lab cleanup script should allow explicit subscription targeting."
+    }
+
+    if (-not $content.Contains('[switch] $Force')) {
+      throw "Lab cleanup script should require an explicit override for untagged resource groups."
+    }
+
+    if (-not $content.Contains('az group show --name $ResourceGroupName --output json')) {
+      throw "Lab cleanup script should validate the resource group before deletion."
+    }
+
+    if ($content -notmatch "certification=AZ-305") {
+      throw "Lab cleanup script should refuse to delete non-lab resource groups by default."
+    }
+  }
+
   It "has ADRs for major architecture decisions" {
     @(
       "docs/adr/0001-hub-spoke-network.md",

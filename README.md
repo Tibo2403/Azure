@@ -317,9 +317,15 @@ task cleanup:minimal
 
 ## Cleanup
 
-```bash
-az group delete --name <resource-group-name> --yes --no-wait
+```powershell
+.\scripts\destroy-lab.ps1 -ResourceGroupName <resource-group-name> -WhatIf
+.\scripts\destroy-lab.ps1 -ResourceGroupName <resource-group-name> -Confirm
+.\scripts\destroy-lab.ps1 -ResourceGroupName <resource-group-name> -SubscriptionId "<subscription-id>" -NoWait
 ```
+
+The cleanup helper validates that the resource group exists and, by default,
+refuses to delete targets that are not tagged with `certification=AZ-305`. Use
+`-Force` only for deliberate exceptions.
 
 ## License
 

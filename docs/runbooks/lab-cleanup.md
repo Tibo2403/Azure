@@ -17,7 +17,13 @@ reviews.
 ## Useful Commands
 
 ```powershell
-.\scripts\destroy-lab.ps1 -ResourceGroupName <rg>
+.\scripts\destroy-lab.ps1 -ResourceGroupName <rg> -WhatIf
+.\scripts\destroy-lab.ps1 -ResourceGroupName <rg> -Confirm
+.\scripts\destroy-lab.ps1 -ResourceGroupName <rg> -SubscriptionId <subscription-id> -NoWait
 az group list --tag certification=AZ-305 --query "[].{name:name,location:location}"
 az consumption usage list
 ```
+
+By default, the script refuses to delete resource groups that are not tagged
+with `certification=AZ-305`. Use `-Force` only when the target has been
+verified and the deletion is intentional.
