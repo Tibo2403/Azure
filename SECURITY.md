@@ -1,13 +1,21 @@
 # Security Policy
 
-## Supported Versions
+## Supported version
 
-Security updates are applied to the `main` branch.
+Security fixes target the current default branch. These templates are learning
+and reference material, not a managed Azure service.
 
-## Responsible Use
+## Reporting a vulnerability
 
-The Bicep templates in this repository are intended only for authorized Azure lab environments. Do not use them against systems or tenants where you do not have explicit permission.
+Use GitHub's private vulnerability reporting or open a private security
+advisory in this repository. Do not disclose credentials, tenant identifiers,
+subscription data, or an exploitable issue in a public issue.
 
-## Reporting a Vulnerability
+Include the affected template, expected impact, reproduction conditions, and a
+minimal redacted example when possible.
 
-Report security concerns privately to the repository owner. Include the affected template, risk, and a minimal reproduction where possible. Do not include secrets, subscription IDs, or public IPs from real environments.
+## Usage boundaries
+
+Deploy security-testing resources only in environments where you have explicit
+authorization. Review costs, scopes, RBAC assignments, network exposure, and
+regional availability before every deployment.
