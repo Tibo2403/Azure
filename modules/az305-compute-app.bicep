@@ -16,6 +16,7 @@ param privateEndpointSubnetId string
 @description('Virtual network ID used for private DNS links.')
 param virtualNetworkId string
 
+@secure()
 @description('Application Insights connection string.')
 param appInsightsConnectionString string
 
