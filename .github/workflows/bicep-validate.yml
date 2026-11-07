@@ -9,6 +9,8 @@ on:
       - "**/*.bicepparam"
       - "bicepconfig.json"
       - "scripts/**"
+      - "**/*.ps1"
+      - "**/*.psm1"
       - "tests/**"
       - "Taskfile.yml"
       - ".github/workflows/bicep-validate.yml"
@@ -18,6 +20,8 @@ on:
       - "**/*.bicepparam"
       - "bicepconfig.json"
       - "scripts/**"
+      - "**/*.ps1"
+      - "**/*.psm1"
       - "tests/**"
       - "Taskfile.yml"
       - ".github/workflows/bicep-validate.yml"
@@ -45,6 +49,14 @@ jobs:
         shell: pwsh
         run: |
           Install-Module Pester -Scope CurrentUser -Force -SkipPublisherCheck
+
+      - name: Lint PowerShell (PSScriptAnalyzer)
+        shell: pwsh
+        run: |
+          Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
+          Invoke-ScriptAnalyzer -Path . -Recurse -Severity Warning | Format-Table -AutoSize
+          $errors = Invoke-ScriptAnalyzer -Path . -Recurse -Severity Error
+          if ($errors) { $errors | Format-List; exit 1 }
 
       - name: Validate Bicep, parameter files, and scripts
         shell: pwsh
